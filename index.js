@@ -33,10 +33,10 @@ async function run(){
           const inventory = await productCollection.findOne(query);
           res.send(inventory);
       })
-      app.put('inventory/:id' , async(req,res)=> {
+      app.put('/inventory/:id' , async(req,res)=> {
           const id = req.params.id;
-        const updatedQuantity = req.body;
-        console.log(req.body);
+        const updatedQuantity = req.body.Quantity;
+       
         const filter = {_id:ObjectId(id)};
         const options = {upsert:true};
         const updatedDoc = {
@@ -48,12 +48,19 @@ async function run(){
 
        res.send(result);
       })
+
+
       app.get('/items', async(req,res) =>{
         const query = {};
        const cursor = itemCollection.find(query);
        const items = await cursor.toArray();
        res.send(items);
        });
+       app.post('/items' , async(req,res) =>{
+           const newItem = req.body;
+           const result = await itemCollection.insertOne(newItem);
+           res.send(result);
+       })
      
     }
     finally{
