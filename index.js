@@ -19,6 +19,7 @@ async function run(){
     try{
       await client.connect();
       const productCollection = client.db('warehouse').collection('product');
+      const itemCollection = client.db('Product').collection('items');
       app.get('/inventory', async(req,res) =>{
        const query = {};
       const cursor = productCollection.find(query);
@@ -32,6 +33,27 @@ async function run(){
           const inventory = await productCollection.findOne(query);
           res.send(inventory);
       })
+      app.put('inventory/:id' , async(req,res)=> {
+          const id = req.params.id;
+        const updatedQuantity = req.body;
+        console.log(req.body);
+        const filter = {_id:ObjectId(id)};
+        const options = {upsert:true};
+        const updatedDoc = {
+            $set:{
+                Quantity:updatedQuantity
+            }
+        };
+        const result = await productCollection.updateOne(filter,updatedDoc , options);
+
+       res.send(result);
+      })
+      app.get('/items', async(req,res) =>{
+        const query = {};
+       const cursor = itemCollection.find(query);
+       const items = await cursor.toArray();
+       res.send(items);
+       });
      
     }
     finally{
@@ -39,6 +61,9 @@ async function run(){
     }
 }
 run().catch(console.dir);
+ 
+
+
 
 
 
