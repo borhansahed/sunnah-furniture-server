@@ -36,6 +36,7 @@ async function run(){
       app.put('/inventory/:id' , async(req,res)=> {
           const id = req.params.id;
         const updatedQuantity = req.body.Quantity;
+        console.log(req.body)
        
         const filter = {_id:ObjectId(id)};
         const options = {upsert:true};
@@ -49,6 +50,13 @@ async function run(){
        res.send(result);
       })
 
+    //   items  api 
+    app.get('/items/:id', async(req,res)=> {
+        const id = req.params.id;
+        const query = {_id:ObjectId(id)};
+        const inventory = await itemCollection.findOne(query);
+        res.send(inventory);
+    })
 
       app.get('/items', async(req,res) =>{
         const query = {};
@@ -60,7 +68,13 @@ async function run(){
            const newItem = req.body;
            const result = await itemCollection.insertOne(newItem);
            res.send(result);
-       })
+       });
+       app.delete('/items/:id' , async(req , res)=>{
+           const id = req.params.id;
+           const query ={_id:ObjectId(id)};
+           const result = await itemCollection.deleteOne(query);
+           res.send(result);
+       });
      
     }
     finally{
@@ -72,7 +86,7 @@ run().catch(console.dir);
 
 
 
-
+// 
 
 app.get('/' , (req , res) => {
     res.send('hello iam sahed');
