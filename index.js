@@ -36,7 +36,6 @@ async function run(){
       app.put('/inventory/:id' , async(req,res)=> {
           const id = req.params.id;
         const updatedQuantity = req.body.Quantity;
-        console.log(req.body)
        
         const filter = {_id:ObjectId(id)};
         const options = {upsert:true};
@@ -66,6 +65,7 @@ async function run(){
        });
        app.post('/items' , async(req,res) =>{
            const newItem = req.body;
+            console.log(newItem)
            const result = await itemCollection.insertOne(newItem);
            res.send(result);
        });
@@ -75,6 +75,13 @@ async function run(){
            const result = await itemCollection.deleteOne(query);
            res.send(result);
        });
+       app.get('/myItems/:email', async (req,res) =>{
+
+        const email = req.params.email;
+        const query = {email:email};
+        const result = await itemCollection.find(query).toArray();
+        res.send(result);
+       })
      
     }
     finally{
